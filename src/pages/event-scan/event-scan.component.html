@@ -1,0 +1,32 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+  	 <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>
+      Event Scan
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+ 
+<ion-content padding>
+ 
+ 	<button ion-button (click)="scan()">Scan</button>
+	<!-- <h3 center>
+    	GooglePlus Auth Example
+  	</h3>
+ 
+ 
+ 
+	<button ion-button center (click)="googlePlusLogin()">
+		Log In with GooglePlus
+	</button>
+ 
+  	<ion-card *ngIf="userProfile">
+    	<img [src]="userProfile.imageUrl"/>
+	    <ion-card-content>
+	    	<ion-card-title>{{ userProfile.displayName }}</ion-card-title>
+	 		The UID for this new user is {{userProfile.userId}} and the email is {{userProfile.email}}
+	    </ion-card-content>
+  	</ion-card> -->
+</ion-content>

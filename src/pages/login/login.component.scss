@@ -1,0 +1,27 @@
+
+page-login {
+
+	
+	ion-content{
+		
+		background-image: url('../assets/img/login_background.png');
+  		-webkit-background-image: url('../assets/img/login_background.png');
+
+		.logo {
+			margin: 0 auto;
+			margin-top: 30%;
+			width: 50%;
+			text-align: center
+		}
+		.google-sign-in {
+			margin: 0 auto;
+			padding: 7%;
+			margin-top: 30%;
+			width: 80%;
+			background-color: red;
+		}
+	}
+	
+
+	
+}
