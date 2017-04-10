@@ -41,11 +41,12 @@ export class DataService {
     private userDataService: UserDataService
     // private loadingCtrl: LoadingController
     ) { 
-    this.debug = true;
+    this.debug = false;
     if (this.debug){
       this.prefix = 'http://85.250.82.28'//'http://win7-kros-PC'
     }else{
       // heroku prefix
+      this.prefix = 'https://autophoto.herokuapp.com'
     }
 
     

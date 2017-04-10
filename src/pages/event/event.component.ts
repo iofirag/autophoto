@@ -1,5 +1,5 @@
 import { Component, Pipe } from '@angular/core';
-import { NavController, NavParams/*, ActionSheetController*/ } from 'ionic-angular';
+import { NavController, NavParams, FabContainer/*, ActionSheetController*/ } from 'ionic-angular';
 
 // import { Transfer, FileUploadOptions, TransferObject } from '@ionic-native/transfer';
 // import { File } from '@ionic-native/file';
@@ -63,8 +63,21 @@ export class EventPage {
   		})
 	}
 
-	addPhoto(): void {
-	  	let sourceType = Camera.PictureSourceType.CAMERA
+	addPhoto(socialNet: string, fab: FabContainer): void {
+		if (fab !== undefined) {
+	      fab.close();
+	    }
+		
+		let sourceType;		//Default is CAMERA. PHOTOLIBRARY : 0, CAMERA : 1, SAVEDPHOTOALBUM : 2
+		switch(socialNet){
+			case 'camera':
+				sourceType = Camera.PictureSourceType.CAMERA
+				break;
+			case 'images':
+				sourceType = Camera.PictureSourceType.PHOTOLIBRARY
+				break;
+		}
+	  	
 
 	  	const options: CameraOptions = {
 		  	quality: 100,
