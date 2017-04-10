@@ -1,3 +1,16 @@
 page-event {
-
+	.photoItem {
+		img.photo {
+			width:100%;
+		}
+	}
 }
+/*
+step-to-move=10;
+if exist cloud:/path/refresh.flg
+then 
+	delete refresh.flg 
+	step-to-move = step-to-move*-1
+	set cursor to 100,100+step-to-move
+
+*/

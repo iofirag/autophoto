@@ -5,6 +5,8 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 // import { Storage } from '@ionic/storage';
 import { NativeStorage } from 'ionic-native';
+import { Camera, CameraOptions, FilePath } from 'ionic-native';
+import { Transfer, TransferObject } from '@ionic-native/transfer'
 //import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 // Pages
 import { AccountPage } from '../pages/account/account.component';
@@ -14,6 +16,7 @@ import { TutorialPage } from '../pages/tutorial/tutorial.component';
 import { EventPage } from '../pages/event/event.component';
 import { EventCreatePage } from '../pages/event-create/event-create.component';
 import { EventFoundedPage } from '../pages/event-founded/event-founded.component';
+import { EventInfoPage } from '../pages/event-info/event-info.component';
 //import { AuthManagerComponent } from '../pages/auth-manager/auth-manager.service';
 
 // Services
@@ -80,7 +83,8 @@ import { UserDataService } from '../providers/user-data.service';
     TutorialPage,
     EventPage,
     EventCreatePage,
-    EventFoundedPage
+    EventFoundedPage,
+    EventInfoPage
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -96,7 +100,8 @@ import { UserDataService } from '../providers/user-data.service';
     TutorialPage,
     EventPage,
     EventCreatePage,
-    EventFoundedPage
+    EventFoundedPage,
+    EventInfoPage
   ],
   providers: [
     {provide: ErrorHandler, useClass: IonicErrorHandler},
@@ -104,7 +109,9 @@ import { UserDataService } from '../providers/user-data.service';
     DataService,
     AuthService,
     //AppSettings,
-    NativeStorage
+    NativeStorage,
+    Camera, FilePath,
+    Transfer, TransferObject
   ]
 })
 export class AppModule {}

@@ -6,10 +6,43 @@
     <ion-title>
       Event
     </ion-title>
+<!--     <button ion-button>
+  	 <ion-icon name="info"></ion-icon>
+    </button> -->
   </ion-navbar>
 </ion-header>
 
 
-<ion-content padding>
+<ion-content>
+
+	<!-- Refresher -->
+	<ion-refresher (ionRefresh)="doRefresh($event)">
+		<ion-refresher-content
+		  pullingIcon="arrow-dropdown"
+		  pullingText="Pull to refresh"
+		  refreshingSpinner="circles"
+		  refreshingText="Refreshing...">
+		</ion-refresher-content>
+	</ion-refresher>
+
+	<!-- All event photos -->
+	<ion-list>
+		<div class="photoItem" *ngFor="let photoKey of photosKeys">
+			<img class="photo" src="{{galleryPhotos[photoKey].secure_url}}"/>
+		</div>
+	</ion-list>
+
+	<!-- Real floating action button, fixed. It will not scroll with the content -->
+	<ion-fab bottom right>
+	  <button ion-fab color="primary" (click)="addPhoto()">
+	  	<ion-icon name="camera"></ion-icon>
+	  </button>
+	</ion-fab>
+
+	<!-- <ion-fab bottom left>
+	  <button ion-fab color="primary" (click)="doRefresh()">
+	  	<ion-icon name="refresh"></ion-icon>
+	  </button>
+	</ion-fab> -->
 
 </ion-content>

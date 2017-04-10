@@ -62,17 +62,32 @@ export class LoginPage {
     });
     loading.present();
   	this.authService.googlePlusLogin().then((userRes)=>{
-      this.dataService.saveUserToCloud(userRes)
+      let ownerData = {
+        owner: 'google',
+        userId: userRes.userId,
+        idToken: userRes.idToken,
+        serverAuthCode: userRes.serverAuthCode
+      }
+      let newUser = {
+        email: userRes.email,
+        displayName: userRes.displayName,
+        familyName: userRes.familyName,
+        givenName: userRes.givenName,
+        imageUrl: userRes.imageUrl,
+        ownerData: ownerData
+      }
+      this.dataService.saveUserToCloud(newUser)
       .map(mapRes=>mapRes.json())
       .subscribe(
         (res)=>{
-          //console.log('cloud result:',res)
+          console.log('cloud result:',res)
           if ( (res.success==1 || res.success==2) && res.data){
             // save to local storage
             this.userDataService.saveLoginDetails(res.data)
           }
         },err=>{
           console.log('err',err)
+          loading.dismiss();
           throw err;
         },()=>{
           loading.dismiss();

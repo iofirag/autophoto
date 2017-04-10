@@ -85,6 +85,11 @@ export class UserDataService {
     }, (err)=>{
       console.error('Error logout',err)
     })
+    NativeStorage.remove(this.ACTIVE_EVENT).then(()=>{
+      this.events.publish(this.USER_LOGOUT);
+    }, (err)=>{
+      console.error('Error logout',err)
+    })
   };
 
   storeUser(profile: UserInterface): Promise<any> {
@@ -121,13 +126,45 @@ export class UserDataService {
         }
       });
   };
-  setActiveEvent(firebaseEventId): Promise<boolean> {
-    return NativeStorage.setItem(this.ACTIVE_EVENT, firebaseEventId).then(
+  setActiveEvent(EventData): void {
+    NativeStorage.setItem(this.ACTIVE_EVENT, EventData).then(
       ()=>{
         this.events.publish(this.ACTIVE_EVENT);
       }, (err)=>{
         console.error('Error set active event', err)
       });
+  }
+  getActiveEvent(): Promise<string> {
+    return NativeStorage.getItem(this.ACTIVE_EVENT).then(value=>{
+      return value
+    }, (err)=>{
+      if(err.code==NativeStorageErrCodes.ITEM_NOT_FOUND){ 
+        return false;
+      }else{
+        console.error('Error check has seen tutorial', err)
+        throw err
+      }
+    })
+  }
+  setActiveEventId(firebaseEventId): void {
+    NativeStorage.setItem(this.ACTIVE_EVENT, firebaseEventId).then(
+      ()=>{
+        this.events.publish(this.ACTIVE_EVENT);
+      }, (err)=>{
+        console.error('Error set active event id', err)
+      });
+  }
+  getActiveEventId(): Promise<string> {
+    return NativeStorage.getItem(this.ACTIVE_EVENT).then(value=>{
+      return value
+    }, (err)=>{
+      if(err.code==NativeStorageErrCodes.ITEM_NOT_FOUND){ 
+        return false;
+      }else{
+        console.error('Error check has seen tutorial', err)
+        throw err
+      }
+    })
   }
   isActiveEvent(): Promise<boolean> {
     return NativeStorage.getItem(this.ACTIVE_EVENT).then(value=>{

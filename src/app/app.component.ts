@@ -1,7 +1,7 @@
 // Core
 import { Component, ViewChild } from '@angular/core';
 // Ionic
-import { Events, MenuController, Nav, Platform } from 'ionic-angular';
+import { NavController, Events, MenuController, Nav, Platform } from 'ionic-angular';
 // import { Splashscreen } from 'ionic-native';
 import { StatusBar, Splashscreen } from 'ionic-native';
 // import { Storage } from '@ionic/storage';
@@ -47,7 +47,9 @@ export interface PageInterface {
 export class MyApp {
   // the root nav is a child of the root app component
   // @ViewChild(Nav) gets a reference to the app's root nav
-  @ViewChild(Nav) nav: Nav;
+  //@ViewChild(Nav) nav: Nav;
+  @ViewChild(Nav) nav: NavController;
+  //@ViewChild('myNav') nav: NavController
 
   // List of pages that can be navigated to from the left menu
   // the left menu only works after login
@@ -118,6 +120,12 @@ export class MyApp {
       //     //StatusBar.styleLightContent();
       //   //}
       // }
+      // this.events.subscribe(this.userDataService.ACTIVE_EVENT, () => {
+      //   //this.enableMenuTypeByLoginStatus(true);
+      //   //console.log('subscribe',this.userDataService.ACTIVE_EVENT)
+      //   //this.checkForActiveEvent()
+      //   this.rootPage = EventPage;
+      // });
     });
   }
 
@@ -193,13 +201,10 @@ export class MyApp {
   loginHandler(isLoggedIn: Boolean) {
     if (isLoggedIn) {
       this.enableMenuTypeByLoginStatus(true);
-      this.checkForActiveEvent()
-
       this.events.subscribe(this.userDataService.ACTIVE_EVENT, () => {
-        //this.enableMenuTypeByLoginStatus(true);
-        console.log('subscribe',this.userDataService.ACTIVE_EVENT)
-        this.checkForActiveEvent()
+        this.redirectToActiveEvent()
       });
+      this.checkForActiveEvent()
       console.log('loginHandler')
     } else {
       this.enableMenuTypeByLoginStatus(false);
@@ -207,16 +212,27 @@ export class MyApp {
       console.log('loginHandler LoginPage')
     }
   }
-
   checkForActiveEvent() {
     this.userDataService.isActiveEvent().then( (isActiveEvent) => {
       console.log('isActiveEvent',isActiveEvent)
       if (isActiveEvent){
-        this.rootPage = EventPage;
+        this.redirectToActiveEvent()
       }else{
         this.rootPage = EventScanPage;
       }
     }) 
+  }
+  redirectToActiveEvent() {
+    //let test = this.nav.getViews() 
+    this.rootPage = EventPage;
+    if (this.nav.getViews().length >0){  // TODO
+      this.nav.popToRoot().then(()=>{
+        console.log('pop all')
+      },err=>{
+        console.log('popToRoot fail, maybe there is not views in the stack')
+      });
+    }
+    
   }
   enableMenuTypeByLoginStatus(loggedIn: boolean) {
     this.menu.enable(loggedIn, 'loggedInMenu');

@@ -1,18 +1,10 @@
-// import { Http, Response, Headers, RequestOptions } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-
 import { Component } from '@angular/core';
 import { NavController, NavParams ,Events, MenuController, LoadingController } from 'ionic-angular';
 
-
 import { DataService } from '../../providers/data.service';
 import { UserDataService } from '../../providers/user-data.service';
-/*
-  Generated class for the EventCreate page.
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
+
 @Component({
   selector: 'page-event-create',
   templateUrl: 'event-create.component.html'
@@ -20,36 +12,33 @@ import { UserDataService } from '../../providers/user-data.service';
 export class EventCreatePage {
 
 	newEvent: any
-  	constructor(
-	  	public dataService: DataService,
-	  	public loadingCtrl: LoadingController,
-	  	public userDataService: UserDataService
-	  	//public navCtrl: NavController, 
-	  	//public navParams: NavParams,
-	  	//public http: Http
-	  	) { 
-	  	this.newEvent = {
-	  		title: '',
-	  		description: '',
-	  		location: {long:0,lat:0},
-	  		coverPictureUrl: '',
-	  		createdBy: ''
-	  	}
-	  	this.userDataService.getUser().then(
-			val=>{
-				console.log('EventCreatePage - constructor',val)
-				this.newEvent.createdBy = val.fbaseId
-			},err=>{
-				console.log('err',err)
-			})
+
+	constructor(
+  	public dataService: DataService,
+  	public loadingCtrl: LoadingController,
+  	public userDataService: UserDataService
+  	) { 
+  	this.newEvent = {
+      createdBy: '',
+      location: {long:0,lat:0},
+      title: '',
+      description: '',
+  		coverPictureUrl: ''
   	}
+  	this.userDataService.getUser().then(
+  		val=>{
+  			console.log('EventCreatePage - constructor',val)
+  			this.newEvent.createdBy = val.firebaseId
+  		},err=>{
+  			console.log('err',err)
+  		})
+	}
 
 
   createEvent(): void{
   	let loading = this.loadingCtrl.create({
       content: 'Please wait...'
-    });
-    
+    })
 
   	this.newEvent.location = {long:11.5 ,lat:22.4}
   	console.log(this.newEvent)
@@ -63,7 +52,7 @@ export class EventCreatePage {
   			if (res.success==1){
   				console.log('firebaseEventId',res.data.firebaseEventId)
   				// save return firebaseEventId as active event
-  				this.userDataService.setActiveEvent(res.data.firebaseEventId)
+  				this.userDataService.setActiveEvent(res.data)
   			}
   		},err=>{
   			console.log(err)
