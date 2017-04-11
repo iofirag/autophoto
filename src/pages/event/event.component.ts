@@ -107,7 +107,7 @@ export class EventPage {
 			// this.photosKeys.push('test')
 
 			// let uploadFilePath = 'https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png'
-			let endpoint = 'http://85.250.82.28/gallery/insertFilesToGalleryId'
+			let endpoint = 'https://autophoto.herokuapp.com/gallery/insertFilesToGalleryId'
 			// var options = {
 			//     fileKey: 'photo',
 			//     //fileName: filename,
@@ -121,8 +121,7 @@ export class EventPage {
 
 			let options: FileUploadOptions = {
 			    fileKey: 'photo',
-			    //fileName: 'name.jpg',
-
+			    chunkedMode: false,
 			    // headers: {},
 			    params : {
 			    	galleryId: this.eventData.galleryId,
@@ -130,6 +129,7 @@ export class EventPage {
 			    }
 			}
 			const fileTransfer: TransferObject = this.transfer.create();
+			console.log('start transfering')
 			fileTransfer.upload(imageUri, endpoint, options)
 				.then((fileTransferRes) => {
 				 // success

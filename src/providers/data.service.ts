@@ -43,7 +43,7 @@ export class DataService {
     ) { 
     this.debug = false;
     if (this.debug){
-      this.prefix = 'http://85.250.82.28'//'http://win7-kros-PC'
+      this.prefix = 'http://85.250.82.28:7000'//'http://win7-kros-PC:5000' //'http://85.250.82.28'//'http://win7-kros-PC'
     }else{
       // heroku prefix
       this.prefix = 'https://autophoto.herokuapp.com'
