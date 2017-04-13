@@ -101,13 +101,13 @@ export class EventPage {
 		 //    mimeType: "multipart/form-data",
 		 //    params : {'fileName': filename}
 		 //  };
-			console.log('imageUri',imageUri)
+			// console.log('imageUri',imageUri)
 
 			// this.galleryPhotos['test'] = {secure_url: imageUri}
 			// this.photosKeys.push('test')
 
 			// let uploadFilePath = 'https://www.gstatic.com/mobilesdk/160503_mobilesdk/logo/2x/firebase_28dp.png'
-			let endpoint = 'https://autophoto.herokuapp.com/gallery/insertFilesToGalleryId'
+			// let endpoint = 'https://autophoto.herokuapp.com/gallery/insertFilesToGalleryId'
 			// var options = {
 			//     fileKey: 'photo',
 			//     //fileName: filename,
@@ -119,21 +119,46 @@ export class EventPage {
 			//     }
 			// };
 
-			let options: FileUploadOptions = {
-			    fileKey: 'photo',
-			    chunkedMode: false,
-			    // headers: {},
-			    params : {
-			    	galleryId: this.eventData.galleryId,
-			    	userId: this.userProfile.firebaseId
-			    }
+			// let options: FileUploadOptions = {
+			//     fileKey: 'photo',
+			//     chunkedMode: false,
+			//     // headers: {},
+			//     params : {
+			//     	galleryId: this.eventData.galleryId,
+			//     	userId: this.userProfile.firebaseId
+			//     }
+			// }
+			// const fileTransfer: TransferObject = this.transfer.create();
+			// console.log('start transfering')
+			// fileTransfer.upload(imageUri, endpoint, options)
+			let paramsToSend = {
+				galleryId: this.eventData.galleryId,
+				userId: this.userProfile.firebaseId,
+				filePath: imageUri
 			}
-			const fileTransfer: TransferObject = this.transfer.create();
-			console.log('start transfering')
-			fileTransfer.upload(imageUri, endpoint, options)
+			// console.log('paramsToSend 1',paramsToSend)
+			this.dataService.insertFilesToGalleryId(paramsToSend)
 				.then((fileTransferRes) => {
-				 // success
-				 console.log('fileTransferRes',fileTransferRes)
+					// console.log('fileTransferRes',fileTransferRes.response)
+					// console.log(JSON.parse(fileTransferRes.response))
+
+					var resData = JSON.parse(fileTransferRes.response)
+					// console.log('resData',resData)
+					// success
+					if (resData && resData.success>0){
+						// console.log('resData.success',resData.success)
+						// let pictureCloudData = resData.data
+						this.galleryPhotos[resData.data.uniqueKey] = resData.data
+						let oldKeys = this.photosKeys;
+						oldKeys.unshift(resData.data.uniqueKey)
+						this.photosKeys = oldKeys
+						
+						// console.log('resData.data.uniqueKey',resData.data.uniqueKey)
+						// console.log('this.galleryPhotos[resData.data.uniqueKey]',this.galleryPhotos[resData.data.uniqueKey])
+						// console.log('this.photosKeys',this.photosKeys)
+					}else{
+						console.log('Upload error',fileTransferRes)
+					}
 				}, (err) => {
 				 // error
 				 console.log('err',err)			     

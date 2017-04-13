@@ -1,6 +1,8 @@
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 
+import { Transfer, TransferObject, FileUploadOptions } from '@ionic-native/transfer'
+
 import { LoadingController } from 'ionic-angular';
 
 import { Injectable } from '@angular/core';
@@ -38,7 +40,8 @@ export class DataService {
 
 	constructor(
     private http: Http,
-    private userDataService: UserDataService
+    private userDataService: UserDataService,
+    private transfer: Transfer
     // private loadingCtrl: LoadingController
     ) { 
     this.debug = false;
@@ -100,8 +103,9 @@ export class DataService {
     console.log('execute getGroupUsers()')
     return this.http.get(this.prefix+'/group/'+eventGroupId)
   }
-  insertFilesToGalleryId(paramsToSend): Observable<any> {
-    console.log('execute insertFilesToGalleryId()')
+  insertFilesToGalleryId(paramsToSend): Promise<any> {
+    console.log('execute insertFilesToGalleryId()', paramsToSend)
+    // console.log(paramsToSend)
     // let dataToSend = {
     //   galleryId: paramsToSend.galleryId,
     //   userId: paramsToSend.userId,
@@ -109,20 +113,34 @@ export class DataService {
     // }
 
     // Headers
-    let headers = new Headers();
-    headers.set('Content-Type', 'multipart/form-data');
-    console.log('headers',headers)
+    // let headers = new Headers();
+    // headers.set('Content-Type', 'multipart/form-data');
+    // console.log('headers',headers)
     
-    // Form data    
-    let formData = new FormData();
-    formData.append('galleryId', paramsToSend.galleryId);
-    formData.append('userId', paramsToSend.userId);
-    formData.append('photo',  paramsToSend.fileUri);
-    // window.resolveLocalFileSystemURL(paramsToSend.fileUri, function (file) {
-    //   formData.append("documento", file);
-    // });
-    // console.log('formData',formData.get('photo'))
+    // // Form data    
+    // let formData = new FormData();
+    // formData.append('galleryId', paramsToSend.galleryId);
+    // formData.append('userId', paramsToSend.userId);
+    // formData.append('photo',  paramsToSend.fileUri);
+    // // window.resolveLocalFileSystemURL(paramsToSend.fileUri, function (file) {
+    // //   formData.append("documento", file);
+    // // });
+    // // console.log('formData',formData.get('photo'))
 
-    return this.http.post(this.prefix+'/gallery/insertFilesToGalleryId', formData ,{'headers': headers});
+    // return this.http.post(this.prefix+'/gallery/insertFilesToGalleryId', formData ,{'headers': headers});
+    const fileTransfer: TransferObject = this.transfer.create();
+    let endpoint = this.prefix+'/gallery/insertFilesToGalleryId'
+    let options: FileUploadOptions = {
+        fileKey: 'photo',
+        chunkedMode: false,
+        // headers: {},
+        params : {
+          galleryId: paramsToSend.galleryId,
+          userId: paramsToSend.userId
+        }
+    }
+    // console.log('options',options)
+    // console.log('start transfering')
+    return fileTransfer.upload(paramsToSend.filePath, endpoint, options)
   }
 }
