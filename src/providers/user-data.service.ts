@@ -10,7 +10,7 @@ export enum NativeStorageErrCodes{
   UNDEFINED_TYPE = 4,
   JSON_ERROR = 5,
   WRONG_PARAMETER = 6
-};
+}
 
 export interface UserInterface {
   email: string;

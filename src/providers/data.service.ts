@@ -46,7 +46,9 @@ export class DataService {
     ) { 
     this.debug = false;
     if (this.debug){
-      this.prefix = 'http://85.250.82.28:7000'//'http://win7-kros-PC:5000' //'http://85.250.82.28'//'http://win7-kros-PC'
+      // this.prefix = 'http://85.250.82.28:7000'//'http://win7-kros-PC:5000' //'http://85.250.82.28'//'http://win7-kros-PC'
+      this.prefix = 'http://10.0.0.10:80';
+      console.log(this.prefix);
     }else{
       // heroku prefix
       this.prefix = 'https://autophoto.herokuapp.com'
@@ -142,5 +144,11 @@ export class DataService {
     // console.log('options',options)
     // console.log('start transfering')
     return fileTransfer.upload(paramsToSend.filePath, endpoint, options)
+  }
+
+  getUserName(fbaseID: string): Observable<any> {
+    console.log('getUserName() executed');
+
+    return this.http.post(`${this.prefix}/user/getName`, {fbaseID: fbaseID}).map(res => res.json());
   }
 }

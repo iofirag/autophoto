@@ -1,12 +1,14 @@
-import { Component, Pipe } from '@angular/core';
+import { Component/*, Pipe*/ } from '@angular/core';
 import { NavController, NavParams, FabContainer/*, ActionSheetController*/ } from 'ionic-angular';
 
 // import { Transfer, FileUploadOptions, TransferObject } from '@ionic-native/transfer';
 // import { File } from '@ionic-native/file';
 // import { Camera, CameraOptions, Transfer } from 'ionic-native';
 
-import { Camera, CameraOptions, FilePath } from 'ionic-native';
-import { Transfer, TransferObject, FileUploadOptions } from '@ionic-native/transfer'
+import { Camera, CameraOptions/*, FilePath*/ } from 'ionic-native';
+import { Transfer/*, TransferObject, FileUploadOptions*/ } from '@ionic-native/transfer';
+import { PhotoViewer } from '@ionic-native/photo-viewer';
+import { ImagePicker } from '@ionic-native/image-picker';
 
 import { DataService } from '../../providers/data.service';
 import { UserDataService } from '../../providers/user-data.service';
@@ -26,19 +28,19 @@ export class EventPage {
 	//eventId: string;
 	eventData: any;
 	photosKeys: Array<string>;
-	galleryPhotos: Array<any>;
+	galleryPhotos: any;
 	//fileTransfer: any
 
-  constructor(
-  	public navCtrl: NavController, 
-  	public navParams: NavParams,
-  	public dataService: DataService,
-  	public userDataService: UserDataService,
-  	private transfer: Transfer
+	constructor(
+  		public navCtrl: NavController, 
+  		public navParams: NavParams,
+  		public dataService: DataService,
+		public userDataService: UserDataService,
+	  	private transfer: Transfer,
+		private photoViewer: PhotoViewer,
+		private imagePicker: ImagePicker  
   	// public actionSheetCtrl: ActionSheetController,
   	) { }
-
-	
 
 	ngOnInit() {
 		this.restoreUserProfile()
@@ -53,6 +55,7 @@ export class EventPage {
   				console.log(' restoreUserProfile() err',err)
   			})
 	}
+
   	restoreCurrentEvent() {
 		this.userDataService.getActiveEvent().then(
 		(eventData)=>{
@@ -78,7 +81,6 @@ export class EventPage {
 				break;
 		}
 	  	
-
 	  	const options: CameraOptions = {
 		  	quality: 100,
 		  	destinationType: Camera.DestinationType.FILE_URI, //.DATA_URL (data),	//.NATIVE_URI (ios) //.FILE_URI (android)
@@ -217,7 +219,56 @@ export class EventPage {
 		});
 	}
 
- 	getGalleryDataByEventGalleryId() {
+	getPhotoFromGallery(fab: FabContainer): void {
+		if(fab != undefined){
+			fab.close();
+		}
+		
+		this.imagePicker.getPictures({
+			maximumImagesCount: 20
+		}).then((imagesURI)=>{
+			console.log(imagesURI);
+
+			for(let i = 0; i < imagesURI.length; i++){
+				let paramsToSend = {
+					galleryId: this.eventData.galleryId,
+					userId: this.userProfile.firebaseId,
+					filePath: imagesURI[i]
+				}
+
+				this.dataService.insertFilesToGalleryId(paramsToSend).then((fileTransferRes) => {
+					// console.log('fileTransferRes',fileTransferRes.response)
+					// console.log(JSON.parse(fileTransferRes.response))
+
+					var resData = JSON.parse(fileTransferRes.response)
+					// console.log('resData',resData)
+					// success
+					if (resData && resData.success>0){
+						// console.log('resData.success',resData.success)
+						// let pictureCloudData = resData.data
+						this.galleryPhotos[resData.data.uniqueKey] = resData.data
+						let oldKeys = this.photosKeys;
+						oldKeys.unshift(resData.data.uniqueKey)
+						this.photosKeys = oldKeys
+						
+						// console.log('resData.data.uniqueKey',resData.data.uniqueKey)
+						// console.log('this.galleryPhotos[resData.data.uniqueKey]',this.galleryPhotos[resData.data.uniqueKey])
+						// console.log('this.photosKeys',this.photosKeys)
+					}else{
+						console.log('Upload error',fileTransferRes)
+					}
+				}, (err) => {
+					// error
+					console.log('err',err)			     
+				});
+			}
+		},
+		(ex)=>{
+			console.error(ex);
+		})
+	}
+
+ 	getGalleryDataByEventGalleryId(): void {
   		this.fetchPhotos().then((val)=>{
   			//refresher.complete();
   			console.log('fetchPhotos() success',val)
@@ -228,9 +279,10 @@ export class EventPage {
   		})
 	}
 
-	ionViewDidLoad() {
+	ionViewDidLoad(): void {
 	    console.log('ionViewDidLoad EventPage');
 	}
+
 	doRefresh(refresher) {
   		this.fetchPhotos().then((val)=>{
   			refresher.complete();
@@ -244,13 +296,22 @@ export class EventPage {
   			this.dataService.getGalleryDataByEventGalleryId(this.eventData.galleryId).map(mapRes=>mapRes.json())
 	  		.subscribe(// get body data
 	  			(galleryDataRes:any)=>{
-		  			console.log('galleryDataRes',galleryDataRes)
+		  			console.log('galleryDataRes',galleryDataRes);
 	  				if (galleryDataRes.success>0){
 		  				if (galleryDataRes.data){
 		  					//debugger;
 		  					//this.eventData = galleryDataRes.data
-		  					this.galleryPhotos = galleryDataRes.data || {};
-		  					this.photosKeys = Object.keys(galleryDataRes.data).slice().reverse();	//reverse
+
+							// Adding the tinyPicture url
+							for(let id in galleryDataRes.data){
+								console.log(galleryDataRes.data[id]);
+								galleryDataRes.data[id]['tinyPicURL'] = this.getTinyPicture(galleryDataRes.data[id].secure_url);
+							}							
+							
+							this.galleryPhotos = galleryDataRes.data || {};
+							console.log('this.galleryPhotos', this.galleryPhotos);
+
+							this.photosKeys = Object.keys(galleryDataRes.data).slice().reverse();	//reverse
 		  					// if ( !this.eventData.photos){
 		  					// 	this.eventData.photos = {}
 		  					// }
@@ -273,6 +334,32 @@ export class EventPage {
 					reject()
 				})
   		})
+	}
+
+	getTinyPicture(picUrl: string): string {
+		return picUrl.split("upload")[0] + "upload/w_100,h_100" + picUrl.split("upload")[1];
+	}
+
+	showPic(pic: any): void {
+		console.log(this.galleryPhotos[pic].uploadBy);
+
+		this.dataService.getUserName(this.galleryPhotos[pic].uploadBy).subscribe((resFromServer) => {
+			console.log(resFromServer);
+
+			if(resFromServer.success > 0){
+				let name = resFromServer.name;
+				console.log(this.galleryPhotos[pic].secure_url);
+				
+				this.photoViewer.show(this.galleryPhotos[pic].secure_url, "Uploaded By: " + name, {
+					share: true
+				})
+			}else{
+				console.error(resFromServer.description);
+			}
+		},
+		(ex)=>{
+			console.error(ex);
+		})
 	}
 
 	// public presentActionSheet() {

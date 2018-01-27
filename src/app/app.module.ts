@@ -5,7 +5,7 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 // import { Storage } from '@ionic/storage';
 import { NativeStorage } from 'ionic-native';
-import { Camera, CameraOptions, FilePath } from 'ionic-native';
+import { Camera, FilePath } from 'ionic-native';
 import { Transfer, TransferObject } from '@ionic-native/transfer'
 //import { CloudSettings, CloudModule } from '@ionic/cloud-angular';
 // Pages
@@ -17,6 +17,9 @@ import { EventPage } from '../pages/event/event.component';
 import { EventCreatePage } from '../pages/event-create/event-create.component';
 import { EventFoundedPage } from '../pages/event-founded/event-founded.component';
 import { EventInfoPage } from '../pages/event-info/event-info.component';
+import { PhotoViewer } from '@ionic-native/photo-viewer';
+import { ImagePicker } from '@ionic-native/image-picker';
+
 //import { AuthManagerComponent } from '../pages/auth-manager/auth-manager.service';
 
 // Services
@@ -111,7 +114,10 @@ import { UserDataService } from '../providers/user-data.service';
     //AppSettings,
     NativeStorage,
     Camera, FilePath,
-    Transfer, TransferObject
+    Transfer, 
+    TransferObject,
+    PhotoViewer,
+    ImagePicker
   ]
 })
 export class AppModule {}

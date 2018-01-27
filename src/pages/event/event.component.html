@@ -26,11 +26,15 @@
 	</ion-refresher>
 
 	<!-- All event photos -->
-	<ion-list>
+	<!-- <ion-list>
 		<div class="photoItem" *ngFor="let photoKey of photosKeys">
-			<img class="photo" src="{{galleryPhotos[photoKey].secure_url}}"/>
+			<img class="photo" src="{{galleryPhotos[photoKey].tinyPicURL}}"/>
 		</div>
-	</ion-list>
+	</ion-list> -->
+
+	<section>
+    <img *ngFor="let photoKey of photosKeys" class="galleryGrid" (click)="showPic(photoKey)" src={{galleryPhotos[photoKey].tinyPicURL}} />
+  </section>
 
 	<!-- Real floating action button, fixed. It will not scroll with the content -->
 	<!-- <ion-fab bottom right>
@@ -52,7 +56,7 @@
 	   	</ion-fab-list>
 
 	   	<ion-fab-list side="left">
-	    	<button ion-fab (click)="addPhoto('images', fab)">
+	    	<button ion-fab (click)="getPhotoFromGallery(fab)">
 	   			<ion-icon name="images"></ion-icon>
 	    	</button>
 	   	</ion-fab-list>
